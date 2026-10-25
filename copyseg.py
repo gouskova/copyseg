@@ -22,9 +22,10 @@ def copyseg(string):
     cands = set()
     for cand in outset:#this is the concatenation part
         for i in range(0,len(string)+1):
-            cands.add(f'{string[0:i]}-{cand}-{string[i:]}')
+            cands.add(f'{string[0:i]}-{cand}-{string[i:]}'.strip('-'))
     print(sorted(list(cands)))
     print(len(cands))
+    return cands
 
 def copyseg_l(string):
     '''
@@ -35,11 +36,33 @@ def copyseg_l(string):
     for i in range(0, len(string)):
         ignore = string[0:i]
         base = string[i:len(string)]
-        for j in range(0, len(base)):
-            copy = string[0:j+1]
-            cands.add(f'{ignore}-{copy}-{base}')
+        for j in range(0, len(base)+1):
+            copy = base[0:j+1]
+            cands.add(f'{ignore}-{copy}-{base}'.strip('-'))
     print(sorted(list(cands)))
     print(len(cands))
+    return cands
+
+def copyseg_r(string):
+    '''
+    Copy-seg a la Gouskova: takes a substring of the input and suffixes or infixes it copying from the right.
+    walks through the word, takes a spot in the word and copies every substring to the left of that spot. Returns the ignored pre-string, copy, and remainder of base
+    '''
+    cands = set()
+    for i in range(len(string)+1): 
+        ignore = string[i:len(string)+1]
+        base = string[0:i]
+        if not base+ignore==string:
+            print("ERROR")
+        for j in range(len(base)):
+            copy = base[j:len(base)]
+            cands.add(f'{base}-{copy}-{ignore}'.strip('-'))
+    print(sorted(list(cands)))
+    print(len(cands))
+    return cands
+
+
+
 
 
 def epenthesis(string):
@@ -53,10 +76,12 @@ def epenthesis(string):
 if __name__=="__main__":
     import sys
     string = sys.argv[1]
-    print("\n\n\n")
-    print("Applying copy-left")
-    copyseg_l(string)
-    print("\n\n\n")
-    #copyseg(string)
+    if len(sys.argv)>2:
+        if sys.argv[2] in ["l","L"]:
+            copyseg_l(string)
+        elif sys.argv[2] in ["r","R"]:
+            copyseg_r(string)
+    else:
+        copyseg(string)
 
     #epenthesis(string)
